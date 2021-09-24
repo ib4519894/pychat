@@ -1,19 +1,35 @@
 from aiohttp import web
+import time 
+
+get_timestamp = time.time
 
 routes = web.RouteTableDef()
 
-messages = []
+messages = [
+    {
+        "sender":"Server",
+        "content":"Welcome to pychat"
+        }
+    ]
 
 @routes.post("/new-msg")
 async def new_message(request):
     global messages
-    sender = (await request.post())["sender"]
-    content = (await request.post())["content"]
+    data = (await request.post())
+    sender = data["sender"]
+    content = data["content"]
+    print(sender)
+    print(content)
     print(f"""
-{sender["username"]}:
-     {content["body"]}
+{sender}:
+     {content}
 """)
-    messages.append((sender, content))
+    messages.append(
+        {
+            "sender":sender,
+            "content":content
+        }
+        )
     if len(messages) > 100:
         messages = messages[10:]
 
